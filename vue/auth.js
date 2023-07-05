@@ -117,7 +117,7 @@ const app = Vue.createApp({
             }
             this.error = null;
              var headers={'Authorization': "Bearer "+ this.accesstoken}
-                await axios.post(baseurl+"/user/auth/check_authentication.php",form_data,{headers}).then(function(response){
+                await axios.post(baseurl+"user/auth/check_authentication.php",form_data,{headers}).then(function(response){
                     if (response.data.status == true){
                         let access_token = response.data.data[0].access_token;
                         this.success = response.data.text;
@@ -301,7 +301,7 @@ const app = Vue.createApp({
                         }
                     }else{
                         this.error = error.message || "Error processing request"
-                        swal(this.error);
+                        Swal.fire(this.error);
                     }
                    
                 })

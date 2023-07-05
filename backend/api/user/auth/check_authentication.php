@@ -46,15 +46,13 @@ if (getenv('REQUEST_METHOD') == 'POST') {
             $dash_mail = $found['email'];
             $emailverified =$found['emailverified'];
             $pass = $found['password'];
-            $dashunmae= $found['username'];
-            $phone = $found['phoneno'];
             $userPubkey= $found['userpubkey'];
             $banreason = 'You have been Banned';
             $checkdata->close();
             $maindata['verification']=$emailverified;
             $maindata=[$maindata];
             $errordesc=" ";
-            $linktosolve="htps://";
+            $linktosolve="https://";
             $hint=[];
             $errordata=[];
             $text="Login Successful";
