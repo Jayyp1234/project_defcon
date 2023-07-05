@@ -7,8 +7,10 @@
 		<script src="./assets/js/scripts.bundle.js"></script>
 		<!--end::Global Javascript Bundle-->
 		<!--begin::Custom Javascript(used for this page only)-->
-		<script src="./assets/js/custom/authentication/sign-in/general.js"></script>
         <script src="./assets/js/custom/utilities/modals/create-account.js"></script>
+        <script src="./assets/js/vue.global.prod.js"></script>
+        <script src="./assets/js/axios.min.js"></script>
+        <script src="./vue/auth.js"></script>
 		<!--end::Custom Javascript-->
 		<!--end::Javascript-->
 	</body>

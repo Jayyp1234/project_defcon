@@ -12,7 +12,7 @@
 						<!--begin::Wrapper-->
 						<div class="w-lg-500px p-10">
 							<!--begin::Form-->
-							<form class="form w-100" novalidate="novalidate" id="kt_sign_up_form" data-kt-redirect-url="./sign-in.html" action="#">
+							<form class="form w-100" novalidate="novalidate" id="kt_sign_up_form" method="POST" action="#">
 								<!--begin::Heading-->
 								<div class="text-center mb-11">
 									<!--begin::Title-->
@@ -41,6 +41,30 @@
 									<span class="w-125px text-gray-500 fw-semibold fs-7">Or with email</span>
 								</div>
 								<!--end::Separator-->
+								<div class="fv-row mb-8">
+									<!--begin::Email-->
+									<input
+										type="text"
+										aria-label="user-fname"
+										placeholder="First Name"
+										name="fname"
+										v-model="firstname"
+										autocomplete="off"
+										class="form-control bg-transparent" />
+									<!--end::Email-->
+								</div>
+								<div class="fv-row mb-8">
+									<!--begin::Email-->
+									<input
+										type="text"
+										aria-label="user-lname"
+										placeholder="Last Name"
+										name="lname"
+										v-model="lastname"
+										autocomplete="off"
+										class="form-control bg-transparent" />
+									<!--end::Email-->
+								</div>
 								<!--begin::Input group=-->
 								<div class="fv-row mb-8">
 									<!--begin::Email-->
@@ -50,11 +74,12 @@
 										placeholder="Email"
 										name="email"
 										autocomplete="off"
+										v-model="email"
 										class="form-control bg-transparent" />
 									<!--end::Email-->
 								</div>
 								<!--begin::Input group-->
-								<div class="fv-row mb-8" data-kt-password-meter="true">
+								<div class="fv-row mb-8" data-kt-password-meter="true" >
 									<!--begin::Wrapper-->
 									<div class="mb-1">
 										<!--begin::Input wrapper-->
@@ -64,7 +89,10 @@
 												type="password"
 												placeholder="Password"
 												name="password"
-												autocomplete="off" />
+												v-model="password"
+												autocomplete="off" 
+												@keyup="password_meter"
+												/>
 											<span
 												class="btn btn-sm btn-icon position-absolute translate-middle top-50 end-0 me-n2"
 												data-kt-password-meter-control="visibility">
@@ -83,9 +111,6 @@
 										<!--end::Meter-->
 									</div>
 									<!--end::Wrapper-->
-									<!--begin::Hint-->
-									<div class="text-muted">Use 8 or more characters with a mix of letters, numbers & symbols.</div>
-									<!--end::Hint-->
 								</div>
 								<!--end::Input group=-->
 								<!--end::Input group=-->
@@ -95,6 +120,7 @@
 										placeholder="Repeat Password"
 										name="confirm-password"
 										type="password"
+										v-model="confirm_password"
 										autocomplete="off"
 										class="form-control bg-transparent" />
 									<!--end::Repeat Password-->
@@ -112,15 +138,10 @@
 								<!--end::Accept-->
 								<!--begin::Submit button-->
 								<div class="d-grid mb-10">
-									<button type="submit" id="kt_sign_up_submit" class="btn btn-primary">
+									<button type="submit" id="kt_sign_up_submit" @click.prevent="register" class="btn btn3 btn-primary">
 										<!--begin::Indicator label-->
 										<span class="indicator-label">Sign up</span>
 										<!--end::Indicator label-->
-										<!--begin::Indicator progress-->
-										<span class="indicator-progress"
-											>Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span
-										></span>
-										<!--end::Indicator progress-->
 									</button>
 								</div>
 								<!--end::Submit button-->

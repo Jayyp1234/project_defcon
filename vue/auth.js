@@ -72,8 +72,8 @@ function makeid(length) {
    return result;
 }
 
-var baseurl="https://app.cardify.co/api/";
-var mainurl="https://app.cardify.co/";
+var baseurl="http://localhost/project_defcon/backend/api/";
+var mainurl="http://localhost/project_defcon";
 const app = Vue.createApp({
     data: () => ({
         firstname:'',
@@ -93,14 +93,6 @@ const app = Vue.createApp({
         showsuccess:false,
         accesstoken:'',
         basedata:'',
-        pin1:'',
-        pin2:'',
-        pin3:'',
-        pin4:'',
-        pin5:'',
-        pin6:'',
-        pin7:'',
-        pin8:'',
     }),
     
     methods: {
@@ -144,121 +136,78 @@ const app = Vue.createApp({
                 }).catch(function(error){
                 });
         },
-        LogWithGoogle:async function(TYPE){
-            axios.get(mainurl+"/config/googleAuth.php?type="+TYPE).then(function(response){
-                    //console.log(response)
-                    window.location.href =response.data;
-                }).catch(function(error){
-                });
-        },
-        getExchnageData(){
-            //Data From The Form...
-            const auth = {  
-                token: getAllUrlParams().exchangetoken,
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-                axios.post(baseurl+"/user/exchange/getexternal_internalddata.php",form_data).then(function(response){
-                    if (response.data.status == true){
-                        console.log(response)
-                        let sentdata= response.data.data.userdata[0];
-                        // store url and data
-                
-                        localStorage.setItem('selectedcoindata', JSON.stringify(sentdata.selectedcurrency));
-                        localStorage.setItem('selectedtocoindata', JSON.stringify(sentdata.selectedexhange));
-                        localStorage.setItem('amounttosell', sentdata.amount);
-                        localStorage.setItem('lasturl', "dashboard/exchange.php?outer=1");
-                        
-                    }
-                }).catch(function(error){
-                });
-        },
         login: async function() {
-            var mainthis=this
-            //Data from The form...
-           
-            var recaptchaRes = grecaptcha.getResponse();
-             
-            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            var self=this;
             if (this.email == '' || this.password == ''){
-                new toastr.error("Please fill in all the fields to complete this registration", "Incomplete field parameters !");
-                return
-            }else if(recaptchaRes.length == 0) {
-               new toastr.error("Please complete the reCAPTCHA challenge!","ReCAPTCHA challenge!");
-               return;
-            } else {
-                // Add reCAPTCHA response to the POST
-                this.captachacode=recaptchaRes;
-            }
-        	if(this.captachacode ==""){
-                new toastr.error("Please complete the reCAPTCHA challenge!","ReCAPTCHA challenge!");
-            	return;
-        	} else{
+                self.error_modal("Please fill in all the fields to complete this registration");
+            }else{
                 const auth = {  
-                        email:this.email,
-                        password: this.password,
-                        googlecode:this.captachacode
+                    email:this.email,
+                    password: this.password
                 };
                 var form_data = new FormData();
                 for (var key in auth) {
                     form_data.append(key, auth[key]);
                 }
-            
                 this.error = null;
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');;
+                $('.btn3').html(`<span class="indicator-progress d-block">Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>`).addClass('disabled');
                 await axios.post(baseurl+"user/auth/login.php", form_data).then(function(response){
                     if (response.data.status == true){
-                        $('.btn').html('Login');
-                        grecaptcha.reset();
+                        $('.btn3').html('<span class="indicator-label">Sign In</span>');
                         let access_token = response.data.data[0].access_token;
                         this.success = response.data.text;
-                        new toastr.success(response.data.text, "Success");
-                        window.localStorage.setItem('token', access_token);
-                        if((response.data.data[0].verification==1||response.data.data[0].verification==2 || response.data.data[0].verification==3) && response.data.data[0].auth_factor){
-                            if (response.data.data[0].token == 'google'){
-                                window.location.href = mainurl+'auth/google-otp';
-                            }else{
-                                window.location.href = mainurl+'auth/otp?token='+response.data.data[0].token;
+                        Swal.fire({
+                            text: this.success,
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
                             }
+                        }).then(function (result) {
+                            if (result.isConfirmed) { 
+                                form.querySelector('[name="email"]').value= "";
+                                form.querySelector('[name="password"]').value= ""; 
+                                location.href = './dashboard/index.php';
+                            }
+                        });
+                        window.localStorage.setItem('token', access_token);
+                        // if((response.data.data[0].verification==1||response.data.data[0].verification==2 || response.data.data[0].verification==3) && response.data.data[0].auth_factor){
+                        //     if (response.data.data[0].token == 'google'){
+                        //         window.location.href = mainurl+'auth/google-otp';
+                        //     }else{
+                        //         window.location.href = mainurl+'auth/otp?token='+response.data.data[0].token;
+                        //     }
                             
-                        }
-                        else if((response.data.data[0].verification==1||response.data.data[0].verification==2 || response.data.data[0].verification==3) && !response.data.data[0].auth_factor){
-                              mainthis.logUserIn()
-                        }
-                        else{
-                            mainthis.sendverifyotp();
-                            window.location.href =mainurl+'auth/verify';
-                        }
+                        // }
+                        // else if((response.data.data[0].verification==1||response.data.data[0].verification==2 || response.data.data[0].verification==3) && !response.data.data[0].auth_factor){
+                        //       mainthis.logUserIn()
+                        // }
+                        // else{
+                        //     mainthis.sendverifyotp();
+                        //     window.location.href =mainurl+'auth/verify';
+                        // }
                     }else{
-                        grecaptcha.reset();
-                          $('.btn').html('Login').removeClass('disabled');; 
+                        $('.btn3').html('<span class="indicator-label">Sign In</span>').removeClass('disabled');; 
                     }
                 }).catch(function(error){
-                    $('.btn').html('Login').removeClass('disabled');;
-                    grecaptcha.reset();
+                    $('.btn3').html('<span class="indicator-label">Sign In</span>').removeClass('disabled');
                     if (error.response){
                         if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Login Unsucessful");
+                            this.error = error.response.data.text;
+                            self.error_modal(this.error);
                         }
                         if (error.response.status === 405){
                             this.error = error.response.data.text
-                            new toastr.error(this.error, "Login Unsucessful");
+                            self.error_modal(this.error);
                         }
                         if (error.response.status === 500){
                             this.error = error.response.data.text
-                            new toastr.error(this.error, "Login Unsucessful");
+                            self.error_modal(this.error);
                         }
                     }else{
                         this.error = error.message || "Error processing request"
-                        swal(this.error);
+                        self.error_modal(this.error);
                     }
                    
                 })
@@ -267,21 +216,14 @@ const app = Vue.createApp({
            
         },
         register: async function(e) {
-            e.preventDefault()
-            var mainthis=this
+            e.preventDefault();
+            var self=this
             //Data From The Form...
             const auth = {  
                 email:this.email,
                 firstname:this.firstname,
                 lastname:this.lastname,
-                username:this.username,
-                password: this.password,
-                phone:this.phone,
-                referedby:this.referby,
-                hearfrom:this.hearfrom,
-                utm_source:getAllUrlParams().utm_source?getAllUrlParams().utm_source:'',
-                utm_medium:getAllUrlParams().utm_medium?getAllUrlParams().utm_medium:'',
-                utm_campaign:getAllUrlParams().utm_campaign?getAllUrlParams().utm_campaign:'',
+                password: this.password
             };
             //Converting it to form Data for API to Consume
             var form_data = new FormData();
@@ -289,30 +231,43 @@ const app = Vue.createApp({
                 form_data.append(key, auth[key]);
             }
             var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            if (this.email == '' || this.firstname == '' || this.lastname == '' || this.username == '' || this.password == ''){
-                new toastr.error("Please fill in all the fields to complete this registration", "Incomplete field parameters !");
+            const regex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{8,}$/;
+            if (this.email == '' || this.firstname == '' || this.lastname == ''  || this.password == ''){
+                self.error_modal("Please fill in all the fields to complete this registration");
             }
+            else if (this.password != this.confirm_password){
+                self.error_modal("Password Fields Not Equal !");
+            }
+            // else if (regex.test(this.password)){
+            //     self.error_modal("Please enter valid password, Use 8 or more characters with a mix of letters, numbers & symbols");
+            // }
             else if (filter.test(this.email)) {
                 this.error = null;
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
+                $('.btn3').html(`<span class="indicator-progress d-block">Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span></span>`).addClass('disabled');
                 await axios.post(baseurl+"user/auth/register.php", form_data).then(function(response){
                     if (response.data.status == true){
-                        $('.btn').html('Submit').removeClass('disabled');;
-                     
+                        $('.btn3').html('<span class="indicator-label">Sign In</span>').removeClass('disabled');
                         let access_token = response.data.data[0].access_token;
-                        mainthis.accesstoken=response.data.data[0].access_token;
-                        mainthis.success = response.data.text;
-                        
                         new toastr.success(response.data.text, "Success");
                         window.localStorage.setItem('token', access_token);
-                        window.location.href =mainurl+'auth/verify';
+                        Swal.fire({
+                            text: response.data.text,
+                            icon: "success",
+                            buttonsStyling: false,
+                            confirmButtonText: "Ok, got it!",
+                            customClass: {
+                                confirmButton: "btn btn-primary"
+                            }
+                        }).then(function (result) {
+                            if (result.isConfirmed) { 
+                                form.querySelector('[name="email"]').value= "";
+                                form.querySelector('[name="password"]').value= "";
+                                window.location.href =mainurl+'/complete_registration.php';
+                            }
+                        });
                     }
                 }).catch(function(error){
-                    $('.btn').html('Submit').removeClass('disabled');
+                    $('.btn3').html('<span class="indicator-label">Sign In</span>').removeClass('disabled');
                     if (error.response){
                         if (error.response.status === 400){
                             this.error = error.response.data.text
@@ -352,516 +307,36 @@ const app = Vue.createApp({
                 })
             }
             else{
-                new toastr.error("Please provide a valid email address", "Invalid Credientials");
+                new toastr.error("Please provide a valid email address", "Invalid Email Address");
+                self.error_modal("Please provide a valid email address");
             }
         },
-        googleregister: async function() {
-            var mainthis=this
-            //Data From The Form...
-            const auth = {  
-                username:this.username,
-                password: this.password,
-                phone:this.phone,
-            };
-            //Converting it to form Data for API to Consume
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            if ( this.username == '' || this.password == ''){
-                new toastr.error("Please fill in all the fields to complete this registration", "Incomplete field parameters !");
-            }
-            else{
-                this.error = null;
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
-                 var headers={'Authorization': "Bearer "+ this.accesstoken}
-                await axios.post(baseurl+"/user/auth/google-complete-register.php",form_data,{headers}).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Complete Registration').removeClass('disabled');;
-                     
-                        let access_token = response.data.data[0].access_token;
-                        mainthis.accesstoken=response.data.data[0].access_token;
-                        mainthis.success = response.data.text;
-                        
-                        new toastr.success(response.data.text, "Success");
-                        window.localStorage.setItem('token', access_token);
-                        window.location.href =mainurl+'dashboard/index';
-                    }
-                }).catch(function(error){
-                    $('.btn').html('Complete Registration').removeClass('disabled');
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            if (this.error == 'Reference number Does not exist.'){
-                                new toastr.error(this.error, "Account Creation Failed");
-                                this.logout();
-                            }
-                            else{
-                                new toastr.error(this.error, "Account Creation Failed");
-                            }
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            if (this.error == 'Reference number Does not exist.'){
-                                new toastr.error(this.error, "Account Creation Failed");
-                                this.logout();
-                            }
-                            else{
-                                new toastr.error(this.error, "Account Creation Failed");
-                            }
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            if (this.error == 'Reference number Does not exist.'){
-                                new toastr.error(this.error, "Account Creation Failed");
-                                this.logout();
-                            }
-                            else{
-                                new toastr.error(this.error, "Account Creation Failed");
-                            }
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-            }
+        password_meter: async function(){
+            form = document.querySelector('#kt_sign_up_form');
+            KTPasswordMeter.getInstance(form.querySelector('[data-kt-password-meter="true"]'));
+            $('input[name="password"]').attr('type','password');
         },
-        forgot_password: async function() {
-            const auth = {  
-                email:this.email
-            };
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            var filter = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
-            if (filter.test(this.email)) {
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');;
-                await axios.post(baseurl+"user/auth/forgot_password.php", form_data).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Send Reset Link').removeClass('disabled');;
-                        let access_token = response.data.data[0].access_token;
-                        this.success = response.data.text;
-                        new toastr.success(response.data.text, "Success");
-                    }
-                }).catch(function(error){
-                    $('.btn').html('Send Reset Link').removeClass('disabled');;
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-            }
-            else{
-                new toastr.error("Please provide a valid email address", "Invalid Credientials");
-            }
-        },
-        reset_password: async function() {
-            //Data From The Form...
-            const auth = {  
-                password: this.confirm_password,
-                token:getAllUrlParams().token
-            };
-            //Converting it to form Data for API to Consume
-
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            if ( this.password == '' || this.confirm_password == ''){
-                $('.btn').html('Submit');
-                new toastr.error("Please fill in all the fields to complete this registration", "Incomplete field parameters !");
-            }
-            else if (this.confirm_password == this.password) {
-                this.error = null;
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
-                await axios.post(baseurl+"user/auth/reset_password.php?token="+getAllUrlParams().token, form_data).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Submit').removeClass('disabled');;
-                        this.success = response.data.text;
-                        swal("Success", response.data.text, "success");
-                        window.location.href =mainurl+'auth/login';
-                    }
-                }).catch(function(error){
-                    $('.btn').html('Submit').removeClass('disabled');;
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Password Reset Failed");
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-            }
-            else{
-                new toastr.error("Password not equal", "Unequal fields");
-            }
-        },
-        sendverifyotp: async function() {
-            self = this
-            let type = getAllUrlParams().type ? getAllUrlParams().type : 1;
-            if (parseInt(type) == 1){
-                self.verifytype = 'email address';
-            } 
-            if (parseInt(type) == 2){
-                self.verifytype = 'phone number';
-            } 
-            //Data From The Form...
-            
-            
-            if (parseInt(type) != 1 || parseInt(type) != 2){
-                //window.location.href = 'https://www.cardify.co/auth/verifyphone';
-            }
-            const auth = {  
-                verifytype: type
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-             var headers={'Authorization': "Bearer "+ this.accesstoken}
-                await axios.post(baseurl+"user/auth/send_verification_otp.php",form_data,{headers}).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Submit');
-                        self.success = response.data.text;
-                        self.basedata = response.data.data;
-                        if (parseInt(type) == 1){
-                            self.verifytype = 'email address';
-                        } 
-                        if (parseInt(type) == 2){
-                            self.verifytype = 'phone number';
-                        } 
-                        new toastr.success(response.data.text, "Success");
-                    }
-                }).catch(function(error){
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.data.error.text == 'The format sent in does not match the correct format for the API'){
-                            window.location.href =mainurl+'auth/login'
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-        },
-        sendverifyotpfor2fa: async function() {
-            self = this;
-            //Data From The Form...
-            let type = getAllUrlParams().token;
-            if (type == 'TYGJOHFUIIH'){
-                this.verifytype = 2;
-            } 
-            if (type == 'TYGJOHFHYUFUJ'){
-                this.verifytype = 3;
-            } 
-            
-            const auth = {  
-                verifytype: this.verifytype
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-             var headers={'Authorization': "Bearer "+ this.accesstoken}
-             
-                await axios.post(baseurl+"user/otp/send_otp_verification_for_2fa.php",form_data,{headers}).then(function(response){
-                    if (response.data.status == true){
-                        self.senddata = response.data.data;
-                        new toastr.success(response.data.text, "Success");
-                    }
-                }).catch(function(error){
-                    
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.data.error.text == 'The format sent in does not match the correct format for the API'){
-                            window.location.href =mainurl+'auth/login'
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-        },
-        verify: async function() {
-            var code = $('.pin1').val()+''+$('.pin2').val()+''+$('.pin3').val()+''+$('.pin4').val()+''+$('.pin5').val()
-            let type = getAllUrlParams().code ? getAllUrlParams().code : code;
-            var mainthis = this
-            //Data From The Form...
-            const auth = {  
-                token:getAllUrlParams().token,
-                code: type
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-            $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
-             var headers={'Authorization': "Bearer "+ this.accesstoken}
-                await axios.post(baseurl+"user/auth/verify_otp.php",form_data,{headers}).then(function(response){
-                    $('.btn').html(`Submit`).removeClass('disabled');
-                    if (response.data.status == true){
-                        this.success = response.data.text;
-                        new toastr.success(response.data.text, "Success");
-                        //window.location.href =mainurl+'auth/login.html?verify=true';
-                        mainthis.logUserIn()
-                    }
-                }).catch(function(error){
-                    $('.btn').html(`Submit`).removeClass('disabled');
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-        },
-        verifyfor2fa: async function() {
-            //Data From The Form...
-            var mainthis =this
-            let type = getAllUrlParams().token;
-            if (type == 'TYGJOHFUIIH'){
-                this.verifytype = 2;
-            } 
-            if (type == 'TYGJOHFHYUFUJ'){
-                this.verifytype = 3;
-            } 
-            var code = $('.pin1').val()+''+$('.pin2').val()+''+$('.pin3').val()+''+$('.pin4').val()+''+$('.pin5').val()+''+$('.pin6').val()+''+$('.pin7').val()
-            const auth = {  
-                type:this.verifytype,code 
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-             if (code.length != 7){
-                new toastr.error("Please fill in all the fields to complete this", "Incomplete field parameters !");
-            }
-            else{
-                var headers={'Authorization': "Bearer "+ this.accesstoken}
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
-                await axios.post(baseurl+"user/otp/verify_otp_to_check_2fa.php",form_data,{headers}).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Submit');
-                        this.success = response.data.text;
-                        new toastr.success(response.data.text, "Success");
-                        let access_token = response.data.data[0].access_token;
-                        window.localStorage.setItem('token', access_token);
-                        mainthis.logUserIn()
-                    }
-                }).catch(function(error){
-                    $('.btn').html('Submit');
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-            }
-             
-        },
-        verifyforgoogle2fa: async function() {
-            //Data From The Form...
-            var mainthis =this
-            var code = $('.pin1').val()+''+$('.pin2').val()+''+$('.pin3').val()+''+$('.pin4').val()+''+$('.pin5').val()+''+$('.pin6').val()
-            const auth = {  
-                code 
-            }
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            this.error = null;
-             if (code.length != 6){
-                new toastr.error("Please fill in all the fields to complete this", "Incomplete field parameters !");
-            }
-            else{
-                var headers={'Authorization': "Bearer "+ this.accesstoken}
-                $('.btn').html(`<div class="d-flex justify-content-center">
-                                     <div class="spinner-border" role="status">
-                                        <span class="sr-only"></span>
-                                     </div>
-                                  </div>`).addClass('disabled');
-                await axios.post(baseurl+"user/otp/verify_otp_to_check_google_2fa_in.php",form_data,{headers}).then(function(response){
-                    if (response.data.status == true){
-                        $('.btn').html('Submit');
-                        this.success = response.data.text;
-                        new toastr.success(response.data.text, "Success");
-                        let access_token = response.data.data[0].access_token;
-                        window.localStorage.setItem('token', access_token);
-                        mainthis.logUserIn()
-                    }
-                }).catch(function(error){
-                    $('.btn').html('Submit');
-                    if (error.response){
-                        if (error.response.status === 400){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 405){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                        if (error.response.status === 500){
-                            this.error = error.response.data.text
-                            new toastr.error(this.error, "Verify Otp Failed");
-                        }
-                    }else{
-                        this.error = error.message || "Error processing request"
-                        swal(this.error);
-                    }
-                   
-                })
-            }
-             
+        error_modal: async function (message){
+            Swal.fire({
+                text: message,
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                customClass: {
+                    confirmButton: "btn btn-primary"
+                }
+            });
         },
         logout:async function() {
             window.localStorage.clear(); //clear all localstorage
             window.location.href =mainurl+'auth/login';
         },
-                        // UTM
-        store_User_utm(){
-            if(getAllUrlParams().utm_source){
-              let self=this
-              var auth={};
-            	    	auth = {  
-                 utm_source:getAllUrlParams().utm_source?getAllUrlParams().utm_source:'',
-                utm_medium:getAllUrlParams().utm_medium?getAllUrlParams().utm_medium:'',
-                utm_campaign:getAllUrlParams().utm_campaign?getAllUrlParams().utm_campaign:'',
-                      };
-        
-            var form_data = new FormData();
-            for (var key in auth) {
-                form_data.append(key, auth[key]);
-            }
-            let api= baseurl+"user/auth/utm_data.php";
-            
-        	axios.post(api,form_data);
-            }
-        },
-           
     },
     beforeMount(){
-         this.store_User_utm()
+        console.clear();
         var pathname=window.location.pathname.replace(/\/\//g, "/")
         this.accesstoken = localStorage.getItem("token");
         
-        if(getAllUrlParams().exchangetoken && getAllUrlParams().exchangetoken!=undefined){
-            // save token and last url
-            // get exchnage data and save also
-            this.getExchnageData()
-        }
-        if(getAllUrlParams().ref && getAllUrlParams().ref!=undefined){
-            // save token and last url
-            // get exchnage data and save also
-            this.referby=getAllUrlParams().ref
-        }
-        if(getAllUrlParams().email && getAllUrlParams().email!=undefined){
-            // save token and last url
-            // get exchnage data and save also
-            this.email=getAllUrlParams().email
-        }
         
         if (pathname.includes('/auth/verify') && getAllUrlParams().token!=undefined){
             this.verify();
@@ -877,7 +352,7 @@ const app = Vue.createApp({
             this.showsuccess=true;
             this.checkauthenyication();
         }
-        if(pathname.includes('/auth/login')){
+        if(pathname.includes('/sign-in')){
             this.checkauthenyication();
         }
         if(pathname.includes('/auth/otp')){
@@ -888,4 +363,4 @@ const app = Vue.createApp({
 });
 
 
-app.mount('#app'); 
+app.mount('#kt_app_root'); 

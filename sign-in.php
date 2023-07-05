@@ -13,7 +13,7 @@
 						<!--begin::Wrapper-->
 						<div class="w-lg-500px p-10">
 							<!--begin::Form-->
-							<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="./index.html" action="#">
+							<form class="form w-100" novalidate="novalidate" id="kt_sign_in_form" data-kt-redirect-url="./index.php" action="#">
 								<!--begin::Heading-->
 								<div class="text-center mb-11">
 									<!--begin::Title-->
@@ -51,6 +51,7 @@
 										type="text"
 										placeholder="Email"
 										name="email"
+										v-model="email"
 										autocomplete="off"
 										class="form-control bg-transparent" />
 									<!--end::Email-->
@@ -63,6 +64,7 @@
 										placeholder="Password"
 										name="password"
 										autocomplete="off"
+										v-model="password"
 										class="form-control bg-transparent" />
 									<!--end::Password-->
 								</div>
@@ -71,21 +73,14 @@
 								<div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
 									<div></div>
 									<!--begin::Link-->
-									<a href="./reset-password.html" class="link-primary">Forgot Password ?</a>
+									<a href="./reset-password.php" class="link-primary">Forgot Password ?</a>
 									<!--end::Link-->
 								</div>
 								<!--end::Wrapper-->
 								<!--begin::Submit button-->
 								<div class="d-grid mb-10">
-									<button type="submit" id="kt_sign_in_submit" class="btn btn-primary">
-										<!--begin::Indicator label-->
-										<span class="indicator-label">Sign In</span>
-										<!--end::Indicator label-->
-										<!--begin::Indicator progress-->
-										<span class="indicator-progress"
-											>Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span
-										></span>
-										<!--end::Indicator progress-->
+									<button type="submit" id="kt_sign_in_submit" @click.prevent="login" class="btn btn3 btn-primary">
+										<span class="indicator-label" >Sign In</span>
 									</button>
 								</div>
 								<!--end::Submit button-->
