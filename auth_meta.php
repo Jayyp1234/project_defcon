@@ -2,18 +2,48 @@
 <html lang="en">
 	<!--begin::Head-->
 	<head>
-		<title>Our Own</title>
-		<meta charset="utf-8" />
-		<meta name="description" content="" />
-		<meta name="keywords" content="" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta property="og:locale" content="en_US" />
-		<meta property="og:type" content="article" />
-		<meta property="og:title" content="" />
-		<meta property="og:url" content="" />
-		<meta property="og:site_name" content="" />
-		<link rel="canonical" href="" />
-		<link rel="shortcut icon" href="./assets/media/logos/favicon.ico" />
+		<title>StellarShift - <?php echo $title ?></title>
+		<!-- Default Meta Tags -->
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="title"
+            content="Transforming the way you work: Save, spend and exchange across digital wallets with StellarShift.">
+          <meta name="description"
+            content="StellarShift is a cutting-edge web app that empowers new startups and existing companies to regulate and manage their staff, build extensive work reports, and monitor work activities. With automated features and seamless functionality, StellarShift simplifies day-to-day operations, enabling businesses to optimize productivity and streamline their workflow. Experience the transformative power of StellarShift and elevate your company's success.">
+          <meta name="author" content="StellarShift">
+          <meta name="keywords" content="StellarShift, web app, startup, existing companies, staff management, work reports, work activities, automation, day-to-day operations">
+          <!-- Google / Search Engine Tags -->
+          <meta itemprop="title"
+            content="Create and Fund Dollar Debit Cards with NGN and USDT: Save, spend and exchange across digital wallets with StellarShift.">
+          <meta itemprop="description"
+            content="StellarShift is a cutting-edge web app that empowers new startups and existing companies to regulate and manage their staff, build extensive work reports, and monitor work activities. With automated features and seamless functionality, StellarShift simplifies day-to-day operations, enabling businesses to optimize productivity and streamline their workflow. Experience the transformative power of StellarShift and elevate your company's success.">
+          <meta itemprop="author" content="StellarShift">
+        
+          <!-- Facebook Meta Tags -->
+          <meta property="og:author" content="StellarShift">
+          <meta property="og:title"
+            content="Create and Fund Dollar Debit Cards with NGN and USDT: Save, spend and exchange across digital wallets.">
+          <meta property="og:description"
+            content="Home - Create and Fund Dollar Debit Cards with NGN and USDT: Save, spend and exchange across digital wallets with StellarShift">
+          <meta property="og:url" content="https://app.StellarShift.co/" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:type" content="website" />
+          <meta property="og:site_name" content="StellarShift" />
+          <meta property="og:image" content="https://app.StellarShift.co/assets/images/abc.svg" />
+          <meta property="og:image:alt" content="StellarShift Logo">
+        
+          <!-- Twitter Meta Tags -->
+          <meta name="twitter:card" content="summary_large_image">
+          <meta name="twitter:site" content="@StellarShiftafrica">
+          <meta name="twitter:creator" content="@StellarShiftafrica">
+          <meta name="twitter:title"
+            content="Home - Create and Fund Dollar Debit Cards with NGN and USDT: Save, spend and exchange across digital wallets with StellarShift.">
+          <meta name="twitter:description"
+            content="Get a virtual dollar card in Nigeria with NGN and USDT on StellarShift">
+          <!-- <meta name="twitter:image" content="https://app.StellarShift.co/assets/images/abc.svg">
+          <meta name="twitter:image:src" content="https://app.StellarShift.co/assets/images/abc.svg" />
+          <meta name="twitter:url" content="https://app.StellarShift.co/"> -->
+          
+		<link rel="shortcut icon" href="./assets/media/logos/favicon.png" />
 		<!--begin::Fonts(mandatory for all pages)-->
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700" />
 		<!--end::Fonts-->
