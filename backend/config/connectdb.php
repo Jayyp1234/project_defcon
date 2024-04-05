@@ -4,7 +4,7 @@ date_default_timezone_set("Africa/Lagos");
 $server= 'localhost';
 $username= 'root';
 $password= '';
-$dbname= 'stellar_shift';
+$dbname= 'stellar';
 
 $connect= mysqli_connect($server,$username,$password,$dbname);
 ?>
