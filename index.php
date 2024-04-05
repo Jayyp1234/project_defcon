@@ -1,1 +1,1 @@
-<?php header('Location: ./sign-in.php'); ?>
+<?php header('Location: ./sign-in.php') ; ?>
