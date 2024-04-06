@@ -6,7 +6,7 @@
 		<!-- Default Meta Tags -->
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="title"
-            content="Transforming the way you work: Save, spend and exchange across digital wallets with StellarShift.">
+            content="Transforming the way you work and officiate: Save, spend and exchange across digital wallets with StellarShift.">
           <meta name="description"
             content="StellarShift is a cutting-edge web app that empowers new startups and existing companies to regulate and manage their staff, build extensive work reports, and monitor work activities. With automated features and seamless functionality, StellarShift simplifies day-to-day operations, enabling businesses to optimize productivity and streamline their workflow. Experience the transformative power of StellarShift and elevate your company's success.">
           <meta name="author" content="StellarShift">
