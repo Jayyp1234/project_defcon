@@ -1,7 +1,7 @@
 deployment:
  ##### THIS ALLOWS US TO DEPLOY THE SITE FROM A GIT REPO ######—Deployment:
 tasks:
-- export DEPLOYPATH=/home/pggtlchq/public_html/project_defcon
+- export DEPLOYPATH= /home/pggtlchq/public_html/project_defcon
 - /bin/cp -R .vscode $DEPLOYPATH
 - /bin/cp -R assets $DEPLOYPATH
 - /bin/cp -R css $DEPLOYPATH
@@ -11,4 +11,4 @@ tasks:
 - /bin/cp -R fonts $DEPLOYPATH
 - /bin/cp -R img $DEPLOYPATH
 - /bin/cp -R js $DEPLOYPATH
-/bin/cp index.html $DEPLOYPATH
+- /bin/cp index.html $DEPLOYPATH
